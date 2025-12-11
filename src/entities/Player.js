@@ -23,6 +23,7 @@ export default class Player extends Phaser.Physics.Arcade.Sprite {
         // Power-up state
         this.isPoweredUp = false;
         this.isInvincible = false;
+        this.isDying = false;
 
         // Player stats
         this.lives = 3;
@@ -122,11 +123,17 @@ export default class Player extends Phaser.Physics.Arcade.Sprite {
     }
 
     die() {
+        // Prevent multiple death calls (e.g., when falling into pit over multiple frames)
+        if (this.isDying) {
+            return;
+        }
+
         // Log death for debugging (can be disabled in production)
         if (this.scene.debugPitDeath) {
             console.log(`[PLAYER DIE] Lives before: ${this.lives}, Position: (${Math.round(this.x)}, ${Math.round(this.y)})`);
         }
 
+        this.isDying = true;
         this.lives--;
         this.setVelocity(0, -300);
         this.setTint(0xff0000);
@@ -152,6 +159,7 @@ export default class Player extends Phaser.Physics.Arcade.Sprite {
         this.setTint(0xffffff);
         this.setScale(1);
         this.isPoweredUp = false;
+        this.isDying = false;
         this.scene.physics.world.enable(this);
         this.becomeInvincible();
     }
