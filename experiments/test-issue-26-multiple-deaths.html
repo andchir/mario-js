@@ -1,0 +1,202 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Test: Issue #26 - Multiple Death Calls</title>
+    <script src="https://cdn.jsdelivr.net/npm/phaser@3.87.0/dist/phaser.min.js"></script>
+    <style>
+        body {
+            margin: 0;
+            padding: 20px;
+            font-family: Arial, sans-serif;
+            background-color: #1a1a1a;
+            color: #ffffff;
+        }
+        h1 {
+            color: #4CAF50;
+        }
+        .test-container {
+            max-width: 800px;
+            margin: 0 auto;
+        }
+        .test-description {
+            background-color: #2d2d2d;
+            padding: 15px;
+            border-radius: 5px;
+            margin-bottom: 20px;
+        }
+        #game-container {
+            margin: 20px auto;
+            text-align: center;
+        }
+        .test-result {
+            margin: 10px 0;
+            padding: 10px;
+            border-radius: 3px;
+        }
+        .pass {
+            background-color: #4CAF50;
+            color: white;
+        }
+        .fail {
+            background-color: #f44336;
+            color: white;
+        }
+        button {
+            padding: 10px 20px;
+            font-size: 16px;
+            margin: 5px;
+            cursor: pointer;
+            background-color: #4CAF50;
+            color: white;
+            border: none;
+            border-radius: 3px;
+        }
+        button:hover {
+            background-color: #45a049;
+        }
+        #output {
+            background-color: #000;
+            padding: 10px;
+            border-radius: 3px;
+            font-family: 'Courier New', monospace;
+            margin-top: 20px;
+            white-space: pre-wrap;
+            max-height: 300px;
+            overflow-y: auto;
+        }
+    </style>
+</head>
+<body>
+    <div class="test-container">
+        <h1>Test: Issue #26 - Pit Fall Should Lose Only One Life</h1>
+
+        <div class="test-description">
+            <h2>Issue Description</h2>
+            <p>When Mario falls into a pit, only <strong>one life</strong> should be lost (like when attacked by an enemy). Currently, when falling, <strong>all lives</strong> are spent and the game stops.</p>
+
+            <h3>Root Cause</h3>
+            <p>The <code>update()</code> method in Level1Scene runs every frame (60fps). When Mario falls below y=600, <code>die()</code> is called on <strong>every frame</strong>, draining all lives instantly.</p>
+
+            <h3>Solution</h3>
+            <p>Added <code>isDying</code> flag to prevent multiple calls to <code>die()</code> during the same death sequence.</p>
+        </div>
+
+        <div id="game-container"></div>
+
+        <div>
+            <button onclick="runTest1()">Test 1: Simulate Multiple die() Calls</button>
+            <button onclick="runTest2()">Test 2: Test with isDying Flag</button>
+            <button onclick="clearOutput()">Clear Output</button>
+        </div>
+
+        <div id="output"></div>
+    </div>
+
+    <script>
+        let output = document.getElementById('output');
+
+        function log(message, style = '') {
+            const timestamp = new Date().toISOString().split('T')[1].substring(0, 12);
+            const line = `[${timestamp}] ${message}\n`;
+            output.textContent += line;
+            output.scrollTop = output.scrollHeight;
+        }
+
+        function clearOutput() {
+            output.textContent = '';
+        }
+
+        // Simulate Player class WITHOUT the fix (old behavior)
+        class PlayerOld {
+            constructor() {
+                this.lives = 3;
+                this.isDying = false;
+                log(`PlayerOld created with ${this.lives} lives`);
+            }
+
+            die() {
+                // No isDying check - this is the bug!
+                log(`[PlayerOld.die()] Called! Lives before: ${this.lives}`);
+                this.lives--;
+                log(`[PlayerOld.die()] Lives after: ${this.lives}`);
+            }
+        }
+
+        // Simulate Player class WITH the fix (new behavior)
+        class PlayerNew {
+            constructor() {
+                this.lives = 3;
+                this.isDying = false;
+                log(`PlayerNew created with ${this.lives} lives`);
+            }
+
+            die() {
+                // Check isDying flag - this is the fix!
+                if (this.isDying) {
+                    log(`[PlayerNew.die()] Already dying, ignoring call`);
+                    return;
+                }
+
+                log(`[PlayerNew.die()] Called! Lives before: ${this.lives}`);
+                this.isDying = true;
+                this.lives--;
+                log(`[PlayerNew.die()] Lives after: ${this.lives}, isDying: ${this.isDying}`);
+
+                // Simulate respawn after 1 second
+                setTimeout(() => {
+                    this.respawn();
+                }, 1000);
+            }
+
+            respawn() {
+                log(`[PlayerNew.respawn()] Respawning, resetting isDying flag`);
+                this.isDying = false;
+            }
+        }
+
+        function runTest1() {
+            log('\n=== TEST 1: Simulating Bug (Multiple die() calls without protection) ===');
+            const player = new PlayerOld();
+
+            log('Simulating 60 frames (1 second at 60fps) of falling below pit threshold...');
+
+            // Simulate update() being called 60 times while player.y > 600
+            for (let frame = 1; frame <= 60; frame++) {
+                player.die(); // Called every frame - BUG!
+            }
+
+            log(`\nRESULT: Lives remaining: ${player.lives}`);
+            if (player.lives <= 0) {
+                log('❌ FAIL: All lives lost! This is the bug.', 'fail');
+            } else {
+                log('✓ PASS: Only one life lost', 'pass');
+            }
+        }
+
+        function runTest2() {
+            log('\n=== TEST 2: Testing Fix (Multiple die() calls with isDying protection) ===');
+            const player = new PlayerNew();
+
+            log('Simulating 60 frames (1 second at 60fps) of falling below pit threshold...');
+
+            // Simulate update() being called 60 times while player.y > 600
+            for (let frame = 1; frame <= 60; frame++) {
+                player.die(); // Called every frame, but protected by isDying flag
+            }
+
+            log(`\nRESULT: Lives remaining: ${player.lives}`);
+            if (player.lives === 2) {
+                log('✓ PASS: Only one life lost! Fix works correctly.', 'pass');
+            } else {
+                log(`❌ FAIL: Expected 2 lives, got ${player.lives}`, 'fail');
+            }
+        }
+
+        // Run initial test
+        log('=== Issue #26 Test Suite ===');
+        log('Ready to test. Click buttons above to run tests.\n');
+    </script>
+</body>
+</html>
