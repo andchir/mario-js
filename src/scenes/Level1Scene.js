@@ -6,6 +6,8 @@ import Level1Config from '../config/Level1Config.js';
 export default class Level1Scene extends Phaser.Scene {
     constructor() {
         super({ key: 'Level1Scene' });
+        // Debug flag for pit death detection - set to false in production
+        this.debugPitDeath = false;
     }
 
     create() {
@@ -352,7 +354,15 @@ export default class Level1Scene extends Phaser.Scene {
 
             // Check if player fell into a pit
             if (this.player.y > this.levelConfig.height) {
+                if (this.debugPitDeath) {
+                    console.log(`[PIT DEATH] Player fell into pit at y=${this.player.y} (threshold=${this.levelConfig.height})`);
+                }
                 this.player.die();
+            }
+
+            // Debug logging for tracking player position near pit threshold
+            if (this.debugPitDeath && this.player.y > this.levelConfig.height - 100) {
+                console.log(`[PIT DEBUG] Player Y: ${this.player.y}, Velocity Y: ${this.player.body.velocity.y}, Threshold: ${this.levelConfig.height}`);
             }
         }
 

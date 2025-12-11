@@ -1,0 +1,342 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Test: Pit Death Detection</title>
+    <script src="https://cdn.jsdelivr.net/npm/phaser@3.87.0/dist/phaser.min.js"></script>
+    <style>
+        body {
+            margin: 0;
+            padding: 20px;
+            font-family: Arial, sans-serif;
+            background: #333;
+            color: white;
+        }
+        #test-results {
+            margin: 20px 0;
+            padding: 15px;
+            background: #222;
+            border-radius: 5px;
+        }
+        .test-case {
+            margin: 10px 0;
+            padding: 10px;
+            border-left: 4px solid #666;
+        }
+        .test-case.pass {
+            border-color: #4caf50;
+            background: #1b5e20;
+        }
+        .test-case.fail {
+            border-color: #f44336;
+            background: #b71c1c;
+        }
+        .test-case.running {
+            border-color: #2196f3;
+            background: #0d47a1;
+        }
+        #game-container {
+            border: 2px solid #666;
+            margin: 20px 0;
+        }
+        button {
+            padding: 10px 20px;
+            font-size: 16px;
+            background: #2196f3;
+            color: white;
+            border: none;
+            border-radius: 4px;
+            cursor: pointer;
+            margin: 5px;
+        }
+        button:hover {
+            background: #1976d2;
+        }
+    </style>
+</head>
+<body>
+    <h1>Pit Death Detection Test</h1>
+    <div>
+        <button onclick="runTest1()">Test 1: Player falls into pit (y > 600)</button>
+        <button onclick="runTest2()">Test 2: Player at normal position (should not die)</button>
+        <button onclick="runTest3()">Test 3: Player at exact boundary (y = 600)</button>
+        <button onclick="runAllTests()">Run All Tests</button>
+    </div>
+    <div id="test-results"></div>
+    <div id="game-container"></div>
+
+    <script type="module">
+        let testResults = [];
+        let currentGame = null;
+
+        function logTest(name, status, message) {
+            const result = { name, status, message, timestamp: new Date().toISOString() };
+            testResults.push(result);
+            updateTestDisplay();
+        }
+
+        function updateTestDisplay() {
+            const container = document.getElementById('test-results');
+            container.innerHTML = '<h2>Test Results</h2>' + testResults.map(r =>
+                `<div class="test-case ${r.status}">
+                    <strong>${r.name}</strong>: ${r.status.toUpperCase()}<br>
+                    ${r.message}<br>
+                    <small>${r.timestamp}</small>
+                </div>`
+            ).join('');
+        }
+
+        // Simple Player class for testing
+        class TestPlayer extends Phaser.Physics.Arcade.Sprite {
+            constructor(scene, x, y) {
+                super(scene, x, y, 'player');
+                scene.add.existing(this);
+                scene.physics.add.existing(this);
+
+                this.lives = 3;
+                this.isDead = false;
+                this.dieCallCount = 0;
+            }
+
+            die() {
+                console.log('Player.die() called at y =', this.y);
+                this.dieCallCount++;
+                this.lives--;
+                this.isDead = true;
+                this.setVelocity(0, -300);
+                this.setTint(0xff0000);
+                this.scene.physics.world.disable(this);
+            }
+        }
+
+        // Test Scene
+        class TestScene extends Phaser.Scene {
+            constructor(config) {
+                super({ key: 'TestScene' });
+                this.testConfig = config;
+            }
+
+            preload() {
+                // Create a simple texture for the player
+                const graphics = this.add.graphics();
+                graphics.fillStyle(0xff0000, 1);
+                graphics.fillRect(0, 0, 32, 32);
+                graphics.generateTexture('player', 32, 32);
+                graphics.destroy();
+            }
+
+            create() {
+                this.levelConfig = { height: 600 };
+
+                // Create player at specified position
+                this.player = new TestPlayer(
+                    this,
+                    this.testConfig.playerX || 100,
+                    this.testConfig.playerY || 100
+                );
+
+                // Track update calls
+                this.updateCount = 0;
+                this.maxUpdates = 10; // Run for 10 frames
+
+                // Store initial state
+                this.testResult = {
+                    initialY: this.player.y,
+                    initialLives: this.player.lives,
+                    dieCallCount: 0,
+                    finalY: null,
+                    finalLives: null
+                };
+            }
+
+            update() {
+                if (this.player && this.updateCount < this.maxUpdates) {
+                    // Apply velocity if specified
+                    if (this.testConfig.velocityY && this.updateCount === 0) {
+                        this.player.setVelocityY(this.testConfig.velocityY);
+                    }
+
+                    // This is the code we're testing from Level1Scene.js:353-356
+                    if (this.player.y > this.levelConfig.height) {
+                        this.player.die();
+                    }
+
+                    this.updateCount++;
+                } else if (this.updateCount === this.maxUpdates) {
+                    // Test complete
+                    this.testResult.finalY = this.player.y;
+                    this.testResult.finalLives = this.player.lives;
+                    this.testResult.dieCallCount = this.player.dieCallCount;
+
+                    if (this.testConfig.onComplete) {
+                        this.testConfig.onComplete(this.testResult);
+                    }
+
+                    this.updateCount++; // Prevent re-running
+                }
+            }
+        }
+
+        // Test functions
+        window.runTest1 = function() {
+            logTest('Test 1', 'running', 'Testing player falling into pit (y > 600)...');
+
+            if (currentGame) {
+                currentGame.destroy(true);
+            }
+
+            currentGame = new Phaser.Game({
+                type: Phaser.AUTO,
+                width: 800,
+                height: 600,
+                parent: 'game-container',
+                physics: {
+                    default: 'arcade',
+                    arcade: {
+                        gravity: { y: 1000 },
+                        debug: true
+                    }
+                },
+                scene: new TestScene({
+                    playerX: 400,
+                    playerY: 650, // Below the level height
+                    onComplete: (result) => {
+                        console.log('Test 1 result:', result);
+
+                        if (result.initialY > 600 && result.dieCallCount > 0) {
+                            logTest('Test 1', 'pass',
+                                `✓ Player died as expected when y=${result.initialY} > 600. die() called ${result.dieCallCount} times.`);
+                        } else if (result.initialY > 600 && result.dieCallCount === 0) {
+                            logTest('Test 1', 'fail',
+                                `✗ Player at y=${result.initialY} did not die! die() was never called.`);
+                        } else {
+                            logTest('Test 1', 'fail',
+                                `✗ Test setup error: player y=${result.initialY}`);
+                        }
+
+                        setTimeout(() => {
+                            currentGame.destroy(true);
+                            currentGame = null;
+                        }, 2000);
+                    }
+                })
+            });
+        };
+
+        window.runTest2 = function() {
+            logTest('Test 2', 'running', 'Testing player at normal position (should not die)...');
+
+            if (currentGame) {
+                currentGame.destroy(true);
+            }
+
+            currentGame = new Phaser.Game({
+                type: Phaser.AUTO,
+                width: 800,
+                height: 600,
+                parent: 'game-container',
+                physics: {
+                    default: 'arcade',
+                    arcade: {
+                        gravity: { y: 1000 },
+                        debug: true
+                    }
+                },
+                scene: new TestScene({
+                    playerX: 400,
+                    playerY: 500, // Normal position above ground
+                    onComplete: (result) => {
+                        console.log('Test 2 result:', result);
+
+                        if (result.initialY <= 600 && result.dieCallCount === 0) {
+                            logTest('Test 2', 'pass',
+                                `✓ Player correctly stayed alive at y=${result.initialY} (< 600)`);
+                        } else if (result.initialY <= 600 && result.dieCallCount > 0) {
+                            logTest('Test 2', 'fail',
+                                `✗ Player incorrectly died at y=${result.initialY}! die() called ${result.dieCallCount} times.`);
+                        } else {
+                            logTest('Test 2', 'fail',
+                                `✗ Test setup error: player y=${result.initialY}`);
+                        }
+
+                        setTimeout(() => {
+                            currentGame.destroy(true);
+                            currentGame = null;
+                        }, 2000);
+                    }
+                })
+            });
+        };
+
+        window.runTest3 = function() {
+            logTest('Test 3', 'running', 'Testing player at exact boundary (y = 600)...');
+
+            if (currentGame) {
+                currentGame.destroy(true);
+            }
+
+            currentGame = new Phaser.Game({
+                type: Phaser.AUTO,
+                width: 800,
+                height: 600,
+                parent: 'game-container',
+                physics: {
+                    default: 'arcade',
+                    arcade: {
+                        gravity: { y: 1000 },
+                        debug: true
+                    }
+                },
+                scene: new TestScene({
+                    playerX: 400,
+                    playerY: 600, // Exactly at boundary
+                    onComplete: (result) => {
+                        console.log('Test 3 result:', result);
+
+                        if (result.initialY === 600 && result.dieCallCount === 0) {
+                            logTest('Test 3', 'pass',
+                                `✓ Player correctly stayed alive at boundary y=${result.initialY} (not > 600)`);
+                        } else if (result.initialY === 600 && result.dieCallCount > 0) {
+                            logTest('Test 3', 'fail',
+                                `✗ Player incorrectly died at boundary y=${result.initialY}`);
+                        } else {
+                            logTest('Test 3', 'fail',
+                                `✗ Test setup error: player y=${result.initialY}`);
+                        }
+
+                        setTimeout(() => {
+                            currentGame.destroy(true);
+                            currentGame = null;
+                        }, 2000);
+                    }
+                })
+            });
+        };
+
+        window.runAllTests = async function() {
+            testResults = [];
+            updateTestDisplay();
+
+            await new Promise(resolve => {
+                runTest1();
+                setTimeout(resolve, 3000);
+            });
+
+            await new Promise(resolve => {
+                runTest2();
+                setTimeout(resolve, 3000);
+            });
+
+            await new Promise(resolve => {
+                runTest3();
+                setTimeout(resolve, 3000);
+            });
+        };
+
+        // Instructions
+        console.log('Pit Death Detection Test loaded.');
+        console.log('Click the buttons above to run individual tests or all tests.');
+    </script>
+</body>
+</html>
