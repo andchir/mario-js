@@ -13,8 +13,8 @@ export default class Player extends Phaser.Physics.Arcade.Sprite {
         this.setGravityY(0);
 
         // Movement properties
-        this.speed = 200;
-        this.jumpVelocity = -450;
+        this.speed = 240; // Increased by 20% (200 * 1.2)
+        this.jumpVelocity = -540; // Increased by 20% (450 * 1.2)
         this.isJumping = false;
         this.facingRight = true;
 
