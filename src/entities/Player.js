@@ -8,7 +8,9 @@ export default class Player extends Phaser.Physics.Arcade.Sprite {
         scene.physics.add.existing(this);
 
         // Player properties
-        this.setCollideWorldBounds(true);
+        // Don't collide with world bounds - we need to detect falling into pits
+        // The pit death detection in Level1Scene checks if player.y > levelHeight
+        this.setCollideWorldBounds(false);
         this.setBounce(0);
         this.setGravityY(0);
 
@@ -120,6 +122,11 @@ export default class Player extends Phaser.Physics.Arcade.Sprite {
     }
 
     die() {
+        // Log death for debugging (can be disabled in production)
+        if (this.scene.debugPitDeath) {
+            console.log(`[PLAYER DIE] Lives before: ${this.lives}, Position: (${Math.round(this.x)}, ${Math.round(this.y)})`);
+        }
+
         this.lives--;
         this.setVelocity(0, -300);
         this.setTint(0xff0000);
@@ -127,8 +134,14 @@ export default class Player extends Phaser.Physics.Arcade.Sprite {
 
         this.scene.time.delayedCall(1000, () => {
             if (this.lives > 0) {
+                if (this.scene.debugPitDeath) {
+                    console.log(`[PLAYER RESPAWN] Respawning with ${this.lives} lives remaining`);
+                }
                 this.respawn();
             } else {
+                if (this.scene.debugPitDeath) {
+                    console.log(`[GAME OVER] No lives remaining`);
+                }
                 this.gameOver();
             }
         });
