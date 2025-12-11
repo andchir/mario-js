@@ -22,7 +22,8 @@ export default {
         // Floating platform
         { x: 800, y: 400, width: 192, height: 32 },
         { x: 1200, y: 350, width: 128, height: 32 },
-        { x: 1500, y: 300, width: 128, height: 32 }
+        { x: 1500, y: 300, width: 128, height: 32 },
+        { x: 4500, y: 300, width: 500, height: 32 }
     ],
 
     // Brick blocks
