@@ -349,6 +349,11 @@ export default class Level1Scene extends Phaser.Scene {
     update() {
         if (this.player) {
             this.player.update();
+
+            // Check if player fell into a pit
+            if (this.player.y > this.levelConfig.height) {
+                this.player.die();
+            }
         }
 
         this.enemyGroup.getChildren().forEach(enemy => {

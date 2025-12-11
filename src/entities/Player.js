@@ -93,7 +93,11 @@ export default class Player extends Phaser.Physics.Arcade.Sprite {
     collectMushroom() {
         if (!this.isPoweredUp) {
             this.isPoweredUp = true;
+            // Adjust Y position to prevent sinking into ground when growing
+            const currentY = this.y;
             this.setScale(1.5);
+            // Move up by half the height difference to keep feet at same level
+            this.y = currentY - (this.displayHeight * 0.25);
             this.score += 1000;
         }
     }
