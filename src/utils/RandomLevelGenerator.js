@@ -49,7 +49,7 @@ export default class RandomLevelGenerator {
     }
 
     // Check if a position would overlap with existing objects
-    // Checks against floating platforms, bricks, questions, pipes, and enemies
+    // Checks against floating platforms, bricks, questions, coins, pipes, and enemies
     isPositionClear(config, x, y, width = 32, height = 32) {
         // Check floating platforms (not main ground at y=568)
         for (const ground of config.grounds) {
@@ -70,6 +70,13 @@ export default class RandomLevelGenerator {
         // Check question blocks
         for (const question of config.questions) {
             if (this.rectanglesOverlap(x, y, width, height, question.x, question.y, 32, 32)) {
+                return false;
+            }
+        }
+
+        // Check coins to prevent overlap
+        for (const coin of config.coins) {
+            if (this.rectanglesOverlap(x, y, width, height, coin.x, coin.y, 32, 32)) {
                 return false;
             }
         }
@@ -111,7 +118,7 @@ export default class RandomLevelGenerator {
             pipes: [],
             goal: {
                 x: this.LEVEL_WIDTH - 200,
-                y: 400
+                y: 536  // Position on ground like in Level 2
             }
         };
 
@@ -238,7 +245,7 @@ export default class RandomLevelGenerator {
 
     generateBricks(config) {
         // Generate brick formations at random positions
-        const numFormations = this.randomInt(4, 8);
+        const numFormations = this.randomInt(3, 5); // Reduced from 4-8 to 3-5
 
         for (let i = 0; i < numFormations; i++) {
             let attempts = 0;
@@ -293,7 +300,7 @@ export default class RandomLevelGenerator {
 
     generateQuestionBlocks(config) {
         // Generate question blocks with power-ups and coins
-        const numBlocks = this.randomInt(4, 8);
+        const numBlocks = this.randomInt(3, 5); // Reduced from 4-8 to 3-5
 
         for (let i = 0; i < numBlocks; i++) {
             let attempts = 0;
@@ -316,7 +323,7 @@ export default class RandomLevelGenerator {
 
     generateCoins(config) {
         // Generate coin formations
-        const numFormations = this.randomInt(5, 10);
+        const numFormations = this.randomInt(4, 7); // Reduced from 5-10 to 4-7
 
         for (let i = 0; i < numFormations; i++) {
             let attempts = 0;
@@ -349,9 +356,16 @@ export default class RandomLevelGenerator {
                     coinsToAdd.push({ x: x, y: y });
                 }
 
-                // Check if the first coin in the formation can be placed (simpler check for coins)
-                // We only check the starting position to allow more freedom for coins
-                if (this.isPositionClear(config, x, y, 32, 32)) {
+                // Check if all coins in the formation can be placed
+                let allClear = true;
+                for (const coin of coinsToAdd) {
+                    if (!this.isPositionClear(config, coin.x, coin.y, 32, 32)) {
+                        allClear = false;
+                        break;
+                    }
+                }
+
+                if (allClear) {
                     config.coins.push(...coinsToAdd);
                     placed = true;
                 }
@@ -362,7 +376,7 @@ export default class RandomLevelGenerator {
 
     generateEnemies(config) {
         // Generate enemies on ground platforms
-        const numEnemies = this.randomInt(4, 8);
+        const numEnemies = this.randomInt(3, 5); // Reduced from 4-8 to 3-5
 
         for (let i = 0; i < numEnemies; i++) {
             let attempts = 0;
@@ -391,7 +405,7 @@ export default class RandomLevelGenerator {
 
     generatePipes(config) {
         // Generate pipes at random positions
-        const numPipes = this.randomInt(3, 6);
+        const numPipes = this.randomInt(2, 4); // Reduced from 3-6 to 2-4
 
         for (let i = 0; i < numPipes; i++) {
             let attempts = 0;

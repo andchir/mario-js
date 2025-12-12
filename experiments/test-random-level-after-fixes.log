@@ -1,0 +1,69 @@
+(node:489816) [MODULE_TYPELESS_PACKAGE_JSON] Warning: Module type of file:///tmp/gh-issue-solver-1765531040420/experiments/test-random-level.js is not specified and it doesn't parse as CommonJS.
+Reparsing as ES module because module syntax was detected. This incurs a performance overhead.
+To eliminate this warning, add "type": "module" to /tmp/gh-issue-solver-1765531040420/package.json.
+(Use `node --trace-warnings ...` to show where the warning was created)
+Testing Random Level Generation Issues
+
+============================================================
+
+Test 1: Checking for object overlaps
+------------------------------------------------------------
+
+Level 1:
+  Grounds: 15
+  Bricks: 13
+  Questions: 4
+  Coins: 24
+  Enemies: 4
+  Pipes: 2
+  ✓ Ground exists at player start
+  Goal position: x=3800, y=536
+  ✓ Ground exists at goal position
+
+Level 2:
+  Grounds: 23
+  Bricks: 19
+  Questions: 5
+  Coins: 23
+  Enemies: 4
+  Pipes: 3
+  ✓ Ground exists at player start
+  Goal position: x=3800, y=536
+  ✓ Ground exists at goal position
+
+Level 3:
+  Grounds: 23
+  Bricks: 15
+  Questions: 4
+  Coins: 19
+  Enemies: 3
+  Pipes: 2
+  ✓ Ground exists at player start
+  Goal position: x=3800, y=536
+  ✓ Ground exists at goal position
+
+Level 4:
+  Grounds: 25
+  Bricks: 24
+  Questions: 3
+  Coins: 32
+  Enemies: 3
+  Pipes: 3
+  ✓ Ground exists at player start
+  Goal position: x=3800, y=536
+  ✓ Ground exists at goal position
+
+Level 5:
+  Grounds: 14
+  Bricks: 15
+  Questions: 5
+  Coins: 20
+  Enemies: 4
+  Pipes: 2
+  ✓ Ground exists at player start
+  Goal position: x=3800, y=536
+  ✓ Ground exists at goal position
+
+============================================================
+Testing complete
+

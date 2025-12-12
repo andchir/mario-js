@@ -156,9 +156,11 @@ export default class RandomLevelScene extends Phaser.Scene {
 
     createGoal() {
         // Create a flag pole as the goal (like in Level 2)
+        // Position it so the bottom of the pole touches the ground
         this.goal = this.add.sprite(this.levelConfig.goal.x, this.levelConfig.goal.y, 'flag');
+        this.goal.setOrigin(0, 1); // Set origin to bottom-left so pole extends upward
         this.physics.add.existing(this.goal, true);
-        this.goal.body.setSize(32, 64);
+        this.goal.body.setSize(42, 200); // Match new flag dimensions
     }
 
     setupCollisions() {
