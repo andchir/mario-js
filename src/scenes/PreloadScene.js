@@ -131,11 +131,13 @@ export default class PreloadScene extends Phaser.Scene {
 
     createFlag() {
         const graphics = this.make.graphics({ x: 0, y: 0, add: false });
-        graphics.lineStyle(3, 0x000000);
-        graphics.lineBetween(2, 0, 2, 64);
+        // Make pole thicker (4px) and taller (200px like in classic Mario)
+        graphics.lineStyle(4, 0x000000);
+        graphics.lineBetween(2, 0, 2, 200);
+        // Red flag at the top
         graphics.fillStyle(0xff0000);
-        graphics.fillTriangle(2, 0, 2, 20, 32, 10);
-        graphics.generateTexture('flag', 32, 64);
+        graphics.fillTriangle(2, 0, 2, 24, 40, 12);
+        graphics.generateTexture('flag', 42, 200);
         graphics.destroy();
     }
 

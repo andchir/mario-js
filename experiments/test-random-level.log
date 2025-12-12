@@ -1,0 +1,74 @@
+(node:489726) [MODULE_TYPELESS_PACKAGE_JSON] Warning: Module type of file:///tmp/gh-issue-solver-1765531040420/experiments/test-random-level.js is not specified and it doesn't parse as CommonJS.
+Reparsing as ES module because module syntax was detected. This incurs a performance overhead.
+To eliminate this warning, add "type": "module" to /tmp/gh-issue-solver-1765531040420/package.json.
+(Use `node --trace-warnings ...` to show where the warning was created)
+Testing Random Level Generation Issues
+
+============================================================
+
+Test 1: Checking for object overlaps
+------------------------------------------------------------
+
+Level 1:
+  Grounds: 22
+  Bricks: 13
+  Questions: 4
+  Coins: 18
+  Enemies: 5
+  Pipes: 6
+  ✓ Ground exists at player start
+  Goal position: x=3800, y=400
+  ⚠️  WARNING: Goal is not on ground (should be y=536, is y=400)
+  ✓ Ground exists at goal position
+
+Level 2:
+  Grounds: 13
+  Bricks: 19
+  Questions: 4
+  Coins: 36
+  Enemies: 3
+  Pipes: 6
+  ✓ Ground exists at player start
+  Goal position: x=3800, y=400
+  ⚠️  WARNING: Goal is not on ground (should be y=536, is y=400)
+  ✓ Ground exists at goal position
+
+Level 3:
+  Grounds: 20
+  Bricks: 19
+  Questions: 6
+  Coins: 41
+  Enemies: 7
+  Pipes: 6
+  ✓ Ground exists at player start
+  Goal position: x=3800, y=400
+  ⚠️  WARNING: Goal is not on ground (should be y=536, is y=400)
+  ✓ Ground exists at goal position
+
+Level 4:
+  Grounds: 20
+  Bricks: 24
+  Questions: 4
+  Coins: 31
+  Enemies: 2
+  Pipes: 4
+  ✓ Ground exists at player start
+  Goal position: x=3800, y=400
+  ⚠️  WARNING: Goal is not on ground (should be y=536, is y=400)
+  ✓ Ground exists at goal position
+
+Level 5:
+  Grounds: 22
+  Bricks: 17
+  Questions: 5
+  Coins: 34
+  Enemies: 5
+  Pipes: 3
+  ✓ Ground exists at player start
+  Goal position: x=3800, y=400
+  ⚠️  WARNING: Goal is not on ground (should be y=536, is y=400)
+  ✓ Ground exists at goal position
+
+============================================================
+Testing complete
+

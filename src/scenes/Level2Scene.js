@@ -170,8 +170,9 @@ export default class Level2Scene extends Phaser.Scene {
 
     createGoal() {
         this.goal = this.add.sprite(this.levelConfig.goal.x, this.levelConfig.goal.y, 'flag');
+        this.goal.setOrigin(0, 1); // Set origin to bottom-left so pole extends upward
         this.physics.add.existing(this.goal, true);
-        this.goal.body.setSize(32, 64);
+        this.goal.body.setSize(42, 200); // Match new flag dimensions
     }
 
     setupCollisions() {
