@@ -62,7 +62,7 @@ export default class Level2Scene extends Phaser.Scene {
         }
         if (previousIsPoweredUp !== undefined && previousIsPoweredUp) {
             this.player.isPoweredUp = true;
-            this.player.setScale(1.5);
+            this.player.setScale(1);
         }
 
         // Setup camera
