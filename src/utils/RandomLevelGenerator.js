@@ -49,8 +49,7 @@ export default class RandomLevelGenerator {
     }
 
     // Check if a position would overlap with existing objects
-    // Checks against floating platforms, bricks, questions, pipes
-    // excludeType is not used anymore - we check against all objects
+    // Checks against floating platforms, bricks, questions, pipes, and enemies
     isPositionClear(config, x, y, width = 32, height = 32) {
         // Check floating platforms (not main ground at y=568)
         for (const ground of config.grounds) {
@@ -78,6 +77,15 @@ export default class RandomLevelGenerator {
         // Check pipes
         for (const pipe of config.pipes) {
             if (this.rectanglesOverlap(x, y, width, height, pipe.x, pipe.y, 64, pipe.height)) {
+                return false;
+            }
+        }
+
+        // Check enemies (add buffer zone to prevent clustering)
+        for (const enemy of config.enemies) {
+            // Use a larger buffer zone (64px) to prevent enemies from being too close
+            const buffer = 64;
+            if (this.rectanglesOverlap(x, y, width, height, enemy.x - buffer, enemy.y - buffer, 32 + buffer * 2, 32 + buffer * 2)) {
                 return false;
             }
         }
@@ -204,7 +212,7 @@ export default class RandomLevelGenerator {
         }
 
         // Add some random floating platforms throughout the level
-        const numExtraPlatforms = this.randomInt(3, 6);
+        const numExtraPlatforms = this.randomInt(2, 4);
         for (let i = 0; i < numExtraPlatforms; i++) {
             let attempts = 0;
             let placed = false;
@@ -230,7 +238,7 @@ export default class RandomLevelGenerator {
 
     generateBricks(config) {
         // Generate brick formations at random positions
-        const numFormations = this.randomInt(8, 15);
+        const numFormations = this.randomInt(4, 8);
 
         for (let i = 0; i < numFormations; i++) {
             let attempts = 0;
@@ -285,7 +293,7 @@ export default class RandomLevelGenerator {
 
     generateQuestionBlocks(config) {
         // Generate question blocks with power-ups and coins
-        const numBlocks = this.randomInt(6, 12);
+        const numBlocks = this.randomInt(4, 8);
 
         for (let i = 0; i < numBlocks; i++) {
             let attempts = 0;
@@ -308,7 +316,7 @@ export default class RandomLevelGenerator {
 
     generateCoins(config) {
         // Generate coin formations
-        const numFormations = this.randomInt(8, 15);
+        const numFormations = this.randomInt(5, 10);
 
         for (let i = 0; i < numFormations; i++) {
             let attempts = 0;
@@ -354,19 +362,29 @@ export default class RandomLevelGenerator {
 
     generateEnemies(config) {
         // Generate enemies on ground platforms
-        const numEnemies = this.randomInt(8, 15);
+        const numEnemies = this.randomInt(4, 8);
 
         for (let i = 0; i < numEnemies; i++) {
-            // Pick a random ground platform
-            const groundIndex = this.randomInt(0, config.grounds.length - 1);
-            const ground = config.grounds[groundIndex];
+            let attempts = 0;
+            let placed = false;
 
-            // Only spawn on wide enough platforms
-            if (ground.width > 200) {
-                const x = ground.x + this.randomInt(100, ground.width - 100);
-                const y = ground.y - 100; // Above ground
+            while (attempts < 10 && !placed) {
+                // Pick a random ground platform
+                const groundIndex = this.randomInt(0, config.grounds.length - 1);
+                const ground = config.grounds[groundIndex];
 
-                config.enemies.push({ type: 'goomba', x: x, y: y });
+                // Only spawn on wide enough platforms
+                if (ground.width > 200) {
+                    const x = ground.x + this.randomInt(100, ground.width - 100);
+                    const y = ground.y - 100; // Above ground
+
+                    // Check if position is clear before placing enemy
+                    if (this.isPositionClear(config, x, y, 32, 32)) {
+                        config.enemies.push({ type: 'goomba', x: x, y: y });
+                        placed = true;
+                    }
+                }
+                attempts++;
             }
         }
     }
