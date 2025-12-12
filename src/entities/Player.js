@@ -104,7 +104,7 @@ export default class Player extends Phaser.Physics.Arcade.Sprite {
             this.isPoweredUp = true;
             // Adjust Y position to prevent sinking into ground when growing
             const currentY = this.y;
-            this.setScale(1.5);
+            this.setScale(1);
             // Move up by half the height difference to keep feet at same level
             this.y = currentY - (this.displayHeight * 0.25);
             this.score += 1000;
@@ -118,7 +118,7 @@ export default class Player extends Phaser.Physics.Arcade.Sprite {
 
         if (this.isPoweredUp) {
             this.isPoweredUp = false;
-            this.setScale(1);
+            this.setScale(0.5);
             this.becomeInvincible();
         } else {
             this.die();
@@ -160,7 +160,7 @@ export default class Player extends Phaser.Physics.Arcade.Sprite {
     respawn() {
         this.setPosition(100, 100);
         this.setTint(0xffffff);
-        this.setScale(1);
+        this.setScale(0.5);
         this.isPoweredUp = false;
         this.isDying = false;
         this.scene.physics.world.enable(this);
