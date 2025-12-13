@@ -20,7 +20,7 @@ export default class MenuScene extends Phaser.Scene {
         const menuBg = this.add.rectangle(width / 2, height / 2 + 100, 500, 300, 0x000000, 0.7);
 
         // Menu title
-        const menuTitle = this.add.text(width / 2, height / 2 - 50, 'SELECT GAME MODE', {
+        const menuTitle = this.add.text(width / 2, height / 2, 'SELECT GAME MODE', {
             fontSize: '24px',
             fontFamily: 'Arial',
             fill: '#ffff00',
