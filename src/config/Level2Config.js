@@ -187,21 +187,12 @@ export default {
         { x: 6160, y: 440 },
         { x: 6160, y: 408 },
         { x: 6160, y: 376 },
-        { x: 6160, y: 344 },
-        // Step 8 (8 blocks high, top of staircase)
-        { x: 6192, y: 536 },
-        { x: 6192, y: 504 },
-        { x: 6192, y: 472 },
-        { x: 6192, y: 440 },
-        { x: 6192, y: 408 },
-        { x: 6192, y: 376 },
-        { x: 6192, y: 344 },
-        { x: 6192, y: 312 }
+        { x: 6160, y: 344 }
     ],
 
     // House (level transition to Level 3)
     house: {
-        x: 6440,
+        x: 6300,
         y: 462
     }
 };
