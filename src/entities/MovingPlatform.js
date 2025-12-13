@@ -2,13 +2,6 @@ export default class MovingPlatform extends Phaser.Physics.Arcade.Sprite {
     constructor(scene, x, y, width = 96) {
         super(scene, x, y, 'movingPlatform');
 
-        // For debug only
-        const graphics = scene.add.graphics();
-        graphics.fillStyle(0x00ff00, 1);
-        graphics.fillRect(x, y, width, 16);
-        graphics.setDepth(1);
-        // ----------------
-
         scene.add.existing(this);
         scene.physics.add.existing(this);
 
@@ -18,6 +11,11 @@ export default class MovingPlatform extends Phaser.Physics.Arcade.Sprite {
         this.body.setSize(width, 16); // Set physics body size to match display
         this.setImmovable(true);
         this.body.allowGravity = false;
+
+        // Make sure the sprite is visible
+        this.setVisible(true);
+        this.setAlpha(1);
+        this.setDepth(1);
 
         // Movement properties
         this.speed = 50; // pixels per second
