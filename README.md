@@ -2,6 +2,8 @@
 
 https://andchir.github.io/mario-js/
 
+![mario-js](https://github.com/andchir/mario-js/blob/main/screenshots/screenshot1.png?raw=true)
+
 A classic Super Mario game implementation built with Phaser.js 3.87.0 featuring the complete first level with professional visuals and gameplay mechanics.
 
 ## 🎮 Features
