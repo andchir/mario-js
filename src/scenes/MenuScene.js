@@ -54,7 +54,7 @@ export default class MenuScene extends Phaser.Scene {
         // Controls instruction
         const controlsText = this.add.text(width / 2, height / 2 + 185,
             'UP/DOWN: Select Mode\nSPACE: Start Game\n\nArrow Keys: Move\nSpace: Jump', {
-            fontSize: '10px',
+            fontSize: '12px',
             fontFamily: 'Arial',
             fill: '#ffffff',
             align: 'center',
