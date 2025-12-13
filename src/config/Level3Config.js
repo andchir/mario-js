@@ -257,21 +257,12 @@ export default {
         { x: 6960, y: 440 },
         { x: 6960, y: 408 },
         { x: 6960, y: 376 },
-        { x: 6960, y: 344 },
-        // Step 8 (8 blocks high, top of staircase)
-        { x: 6992, y: 536 },
-        { x: 6992, y: 504 },
-        { x: 6992, y: 472 },
-        { x: 6992, y: 440 },
-        { x: 6992, y: 408 },
-        { x: 6992, y: 376 },
-        { x: 6992, y: 344 },
-        { x: 6992, y: 312 }
+        { x: 6960, y: 344 }
     ],
 
     // House (level completion) - end of the game
     house: {
-        x: 7040,
+        x: 7100,
         y: 462
     }
 };
