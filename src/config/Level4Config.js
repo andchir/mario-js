@@ -211,51 +211,46 @@ export default {
     ],
 
     // Moving platforms - 40% of traversable area
-    // 7 gap sections with multiple platforms each
+    // 7 gap sections with wider spacing between platforms for increased difficulty
     movingPlatforms: [
-        // Gap 1: 600-1000 (400px gap)
+        // Gap 1: 600-1000 (400px gap) - 3 platforms with wider spacing
         { x: 620, y: 500, width: 96, speed: 45 },
-        { x: 780, y: 470, width: 96, speed: 50 },
-        { x: 880, y: 510, width: 96, speed: 55 },
+        { x: 800, y: 470, width: 96, speed: 50 },
+        { x: 920, y: 510, width: 96, speed: 55 },
 
-        // Gap 2: 1400-1900 (500px gap)
+        // Gap 2: 1400-1900 (500px gap) - 4 platforms with wider spacing
         { x: 1420, y: 490, width: 96, speed: 50 },
-        { x: 1560, y: 460, width: 96, speed: 55 },
-        { x: 1700, y: 500, width: 96, speed: 48 },
-        { x: 1800, y: 470, width: 96, speed: 52 },
+        { x: 1580, y: 460, width: 96, speed: 55 },
+        { x: 1740, y: 500, width: 96, speed: 48 },
+        { x: 1860, y: 470, width: 96, speed: 52 },
 
-        // Gap 3: 2200-2800 (600px gap)
+        // Gap 3: 2200-2800 (600px gap) - 4 platforms with wider spacing
         { x: 2220, y: 500, width: 96, speed: 52 },
-        { x: 2360, y: 470, width: 96, speed: 55 },
-        { x: 2500, y: 490, width: 96, speed: 50 },
-        { x: 2620, y: 460, width: 96, speed: 58 },
-        { x: 2720, y: 510, width: 96, speed: 48 },
+        { x: 2400, y: 470, width: 96, speed: 55 },
+        { x: 2580, y: 490, width: 96, speed: 50 },
+        { x: 2740, y: 510, width: 96, speed: 48 },
 
-        // Gap 4: 3200-3700 (500px gap)
+        // Gap 4: 3200-3700 (500px gap) - 3 platforms with wider spacing
         { x: 3220, y: 490, width: 96, speed: 55 },
-        { x: 3360, y: 460, width: 96, speed: 50 },
-        { x: 3500, y: 500, width: 96, speed: 58 },
-        { x: 3620, y: 470, width: 96, speed: 52 },
+        { x: 3400, y: 460, width: 96, speed: 50 },
+        { x: 3600, y: 500, width: 96, speed: 58 },
 
-        // Gap 5: 4000-4600 (600px gap)
+        // Gap 5: 4000-4600 (600px gap) - 4 platforms with wider spacing
         { x: 4020, y: 500, width: 96, speed: 50 },
-        { x: 4160, y: 470, width: 96, speed: 55 },
-        { x: 4280, y: 490, width: 96, speed: 52 },
-        { x: 4400, y: 460, width: 96, speed: 58 },
-        { x: 4520, y: 510, width: 96, speed: 48 },
+        { x: 4200, y: 470, width: 96, speed: 55 },
+        { x: 4380, y: 490, width: 96, speed: 52 },
+        { x: 4540, y: 510, width: 96, speed: 48 },
 
-        // Gap 6: 5000-5500 (500px gap)
+        // Gap 6: 5000-5500 (500px gap) - 3 platforms with wider spacing
         { x: 5020, y: 490, width: 96, speed: 55 },
-        { x: 5160, y: 460, width: 96, speed: 50 },
-        { x: 5280, y: 500, width: 96, speed: 58 },
-        { x: 5420, y: 470, width: 96, speed: 52 },
+        { x: 5220, y: 460, width: 96, speed: 50 },
+        { x: 5420, y: 500, width: 96, speed: 58 },
 
-        // Gap 7: 5800-6400 (600px gap)
+        // Gap 7: 5800-6400 (600px gap) - 4 platforms with wider spacing
         { x: 5820, y: 500, width: 96, speed: 52 },
-        { x: 5960, y: 470, width: 96, speed: 55 },
-        { x: 6080, y: 490, width: 96, speed: 50 },
-        { x: 6200, y: 460, width: 96, speed: 58 },
-        { x: 6320, y: 510, width: 96, speed: 48 }
+        { x: 6000, y: 470, width: 96, speed: 55 },
+        { x: 6180, y: 490, width: 96, speed: 50 },
+        { x: 6340, y: 510, width: 96, speed: 48 }
     ],
 
     // Staircase before goal (classic Mario pyramid)
