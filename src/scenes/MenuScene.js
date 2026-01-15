@@ -53,7 +53,7 @@ export default class MenuScene extends Phaser.Scene {
 
         // Controls instruction
         const controlsText = this.add.text(width / 2, height / 2 + 185,
-            'UP/DOWN: Select Mode\nSPACE: Start Game\n\nArrow Keys: Move\nSpace: Jump', {
+            'UP/DOWN: Select Mode\nSPACE/ENTER: Start Game\n\nArrow Keys: Move\nSpace: Jump', {
             fontSize: '12px',
             fontFamily: 'Arial',
             fill: '#ffffff',
@@ -79,6 +79,11 @@ export default class MenuScene extends Phaser.Scene {
 
         // Listen for space key to start
         this.input.keyboard.on('keydown-SPACE', () => {
+            this.startGame();
+        });
+
+        // Listen for enter key to start
+        this.input.keyboard.on('keydown-ENTER', () => {
             this.startGame();
         });
     }
